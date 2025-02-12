@@ -141,6 +141,13 @@ if ! command -v wp &> /dev/null; then
     exit 1
 fi
 
+# 檢查網站目錄是否存在
+if [ ! -d "$HOME_DIR" ]; then
+    error_log "錯誤: 網站目錄 $HOME_DIR 不存在"
+    error_log "請先建立網站目錄後再執行指令碼"
+    exit 1
+fi
+
 # 檢查備份目錄是否存在
 if [ ! -d "$BACKUP_DIR" ]; then
     error_log "錯誤: 備份目錄 $BACKUP_DIR 不存在"
