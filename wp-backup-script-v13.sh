@@ -1,20 +1,18 @@
 #!/bin/bash
 
-set -e
-
 # 定義顏色代碼
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+RED='\033[0;31m'      # 錯誤訊息用紅色
+YELLOW='\033[1;33m'   # 警告訊息用黃色
+GREEN='\033[0;32m'    # 成功訊息用綠色
+BLUE='\033[0;34m'     # 資訊訊息用藍色
+CYAN='\033[0;36m'     # 進度訊息用青色
+NC='\033[0m'          # 重置顏色
 
 # 計算耗時的函數（輸入秒數，輸出格式化時間）
 format_time() {
     local seconds=$1
     local hours=$((seconds / 3600))
-    local minutes=$(( (seconds % 3600) / 60 ))
+    local minutes=$(((seconds % 3600) / 60))
     local secs=$((seconds % 60))
     printf "%02d時%02d分%02d秒" $hours $minutes $secs
 }
@@ -22,10 +20,13 @@ format_time() {
 # 轉換位元組到人類可讀格式的函數
 format_size() {
     local size="$1"
+    
+    # 檢查輸入是否為空或非數字
     if [ -z "$size" ] || ! [[ "$size" =~ ^[0-9]+$ ]]; then
         echo "0 B"
         return
     fi
+    
     if [ "$size" -ge 1073741824 ]; then
         echo "$(awk "BEGIN {printf \"%.2f\", $size/1073741824}") GB"
     elif [ "$size" -ge 1048576 ]; then
@@ -126,19 +127,21 @@ error_log() {
     echo "[$timestamp] [ERROR] $message" >> "$LOG_FILE"
 }
 
-# 確保腳本以 root 權限執行
+[previous functions remain the same...]
+
+# 檢查是否為 root 使用者
 if [ "$EUID" -ne 0 ]; then
     error_log "請使用 root 權限執行此指令碼"
     exit 1
 fi
 
-# 確保 wp-cli 已安裝
+# 檢查 wp-cli 是否安裝
 if ! command -v wp &> /dev/null; then
     error_log "找不到 wp-cli，請先安裝 wp-cli"
     exit 1
 fi
 
-# 確保備份目錄存在
+# 檢查備份目錄是否存在
 if [ ! -d "$BACKUP_DIR" ]; then
     error_log "錯誤: 備份目錄 $BACKUP_DIR 不存在"
     error_log "請先建立備份目錄後再執行指令碼"
@@ -161,7 +164,8 @@ check_backup_space() {
             log "PROGRESS" "檢查網站: $site_name"
 
             # 檢查網站檔案大小
-            local files_size=$(get_dir_size_bytes "$SITE_DIR/public_html")
+            cd "$SITE_DIR/public_html" || continue
+            local files_size=$(get_dir_size_bytes "./")
             log "INFO" "- 網站檔案大小: $(format_size $files_size)"
 
             # 檢查資料庫大小
@@ -224,6 +228,7 @@ for SITE_DIR in "$HOME_DIR"/*; do
             mkdir -p "$SITE_BACKUP_DIR"
             
             # 取得網站網址
+            cd "$SITE_DIR/public_html" || continue
             SITE_URL=$(wp option get siteurl --allow-root 2>/dev/null)
             if [ -z "$SITE_URL" ]; then
                 SITE_URL="unknown"
@@ -248,7 +253,7 @@ for SITE_DIR in "$HOME_DIR"/*; do
             # 備份網站檔案
             log "PROGRESS" "開始備份網站檔案..."
             FILES_START_TIME=$(date +%s)
-            if tar -czf "$SITE_BACKUP_DIR/${DATE}_${SITE_URL}_files.tar.gz" -C "$SITE_DIR/public_html" . 2>> "$ERROR_LOG"; then
+            if tar -czf "$SITE_BACKUP_DIR/${DATE}_${SITE_URL}_files.tar.gz" ./ 2>> "$ERROR_LOG"; then
                 FILES_END_TIME=$(date +%s)
                 FILES_DURATION=$((FILES_END_TIME - FILES_START_TIME))
                 log "SUCCESS" "檔案備份完成: $SITE_NAME ($SITE_URL)"
