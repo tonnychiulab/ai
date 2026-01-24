@@ -1,0 +1,341 @@
+/**
+ * 營利事業統一編號檢查小工具 (API Data Fetch Edition)
+ * @version 3.0
+ * @author No-Goldfish-Brain
+ * * Update Log:
+ * - Added GCIS Open Data API integration.
+ * - Added "Company Registration Card" UI.
+ * - Maintained strict security & input enforcement.
+ */
+
+// 1. 註冊儀表板小工具
+add_action( 'wp_dashboard_setup', 'ngb_register_ban_checker_widget' );
+
+function ngb_register_ban_checker_widget() {
+    wp_add_dashboard_widget(
+        'ngb_taiwan_ban_checker',
+        '營利事業統一編號檢查小工具',
+        'ngb_ban_checker_render'
+    );
+}
+
+// 2. 渲染介面 (含台灣味 UI/UX + API 資料顯示)
+function ngb_ban_checker_render() {
+    $result_html = '';
+    $company_info_html = '';
+    $input_value = '';
+
+    // 處理表單提交
+    if ( isset( $_POST['ngb_ban_input'] ) && check_admin_referer( 'ngb_ban_check_action', 'ngb_ban_nonce' ) ) {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( '權限不足 (Insufficient Permissions)' );
+        }
+
+        $input_value = sanitize_text_field( $_POST['ngb_ban_input'] );
+        $ban_clean   = preg_replace( '/[^0-9]/', '', $input_value ); 
+
+        if ( strlen( $ban_clean ) === 8 ) {
+            // A. 先檢查邏輯
+            if ( ngb_verify_taiwan_ban_logic( $ban_clean ) ) {
+                
+                // UX: 邏輯正確 - 顯示綠色/紅色印章
+                $result_html = '
+                <div class="ngb-stamp is-valid">
+                    <div class="ngb-stamp-inner">
+                        <span class="ngb-stamp-text">邏輯相符</span>
+                        <span class="ngb-stamp-sub">VALIDATED</span>
+                    </div>
+                </div>
+                <p class="ngb-msg success">統一編號 ' . esc_html( $ban_clean ) . ' 格式正確</p>';
+
+                // B. 邏輯正確後，呼叫 API 查詢公司資料
+                $api_data = ngb_fetch_gcis_company_data( $ban_clean );
+
+                if ( is_wp_error( $api_data ) ) {
+                    // API 連線錯誤
+                    $company_info_html = '<div class="ngb-api-error">⚠️ 政府資料平臺連線失敗，無法取得詳細資料。</div>';
+                } elseif ( empty( $api_data ) ) {
+                    // 查無資料 (可能是行號/商業登記，而非公司，或尚未同步)
+                    $company_info_html = '<div class="ngb-api-notice">ℹ️ 邏輯正確，但於「公司登記」資料庫中查無此號（可能是獨資/合夥之商業行號）。</div>';
+                } else {
+                    // C. 成功取得資料 - 渲染「登記資料卡」
+                    // API 回傳為陣列，取第一筆
+                    $company = $api_data[0]; 
+                    
+                    $company_info_html = '
+                    <div class="ngb-data-card">
+                        <div class="ngb-card-header">
+                            <span class="ngb-card-title">公司登記基本資料</span>
+                            <span class="ngb-card-badge">' . esc_html( $company['Company_Status_Desc'] ?? '未知' ) . '</span>
+                        </div>
+                        <div class="ngb-card-body">
+                            <div class="ngb-data-row">
+                                <span class="ngb-data-label">公司名稱</span>
+                                <span class="ngb-data-value large">' . esc_html( $company['Company_Name'] ?? '-' ) . '</span>
+                            </div>
+                            <div class="ngb-data-row">
+                                <span class="ngb-data-label">代表人</span>
+                                <span class="ngb-data-value">' . esc_html( $company['Responsible_Name'] ?? '-' ) . '</span>
+                            </div>
+                            <div class="ngb-data-row">
+                                <span class="ngb-data-label">資本總額</span>
+                                <span class="ngb-data-value">' . esc_html( number_format_i18n( (int)($company['Capital_Stock_Amount'] ?? 0) ) ) . ' 元</span>
+                            </div>
+                            <div class="ngb-data-row">
+                                <span class="ngb-data-label">所在地</span>
+                                <span class="ngb-data-value">' . esc_html( $company['Company_Location'] ?? '-' ) . '</span>
+                            </div>
+                        </div>
+                        <div class="ngb-card-footer">資料來源：經濟部商業發展署開放資料</div>
+                    </div>';
+                }
+
+            } else {
+                // UX: 失敗 - 顯示作廢印章
+                $result_html = '
+                <div class="ngb-stamp is-invalid">
+                    <div class="ngb-stamp-inner">
+                        <span class="ngb-stamp-text">邏輯錯誤</span>
+                        <span class="ngb-stamp-sub">INVALID</span>
+                    </div>
+                </div>
+                <p class="ngb-msg error">統一編號 ' . esc_html( $ban_clean ) . ' 驗證失敗</p>';
+            }
+        } else {
+            // UX: 格式錯誤
+            $result_html = '<p class="ngb-msg warning">⚠️ 請輸入完整 8 位半形數字</p>';
+        }
+    }
+
+    ?>
+    <style>
+        .ngb-ban-widget-wrapper {
+            background-color: #fdfbf7;
+            border: 2px solid #008060;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        .ngb-ban-widget-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background-image: repeating-linear-gradient(45deg, #008060 0, #008060 10px, #fdfbf7 10px, #fdfbf7 20px);
+            opacity: 0.3;
+        }
+        .ngb-form-row { margin-bottom: 15px; text-align: center; }
+        .ngb-label { display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
+        
+        .ngb-input-ban {
+            width: 100%;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 24px;
+            letter-spacing: 4px;
+            text-align: center;
+            border: none;
+            border-bottom: 2px dashed #555;
+            background: transparent;
+            color: #222;
+            padding: 5px;
+            outline: none;
+            box-shadow: none;
+            transition: border-color 0.3s;
+        }
+        .ngb-input-ban:focus { border-bottom: 2px solid #d93025; }
+
+        .ngb-submit-btn {
+            background-color: #2c3e50;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            font-size: 15px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .ngb-submit-btn:hover { background-color: #34495e; transform: translateY(-1px); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+
+        /* Stamp Styles */
+        .ngb-stamp-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            min-height: 80px;
+        }
+        .ngb-stamp {
+            width: 100px; height: 100px;
+            border-radius: 50%; border: 3px double;
+            display: flex; align-items: center; justify-content: center;
+            transform: rotate(-15deg); opacity: 0.9; margin-bottom: 10px;
+        }
+        .ngb-stamp-inner { text-align: center; border: 1px solid; width: 80%; height: 80%; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .ngb-stamp.is-valid { color: #d93025; border-color: #d93025; animation: stamp-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .ngb-stamp.is-invalid { color: #555; border-color: #555; border-style: dashed; }
+        .ngb-stamp-text { font-size: 16px; font-weight: 900; line-height: 1.2; font-family: "Microsoft JhengHei", sans-serif; }
+        .ngb-stamp-sub { font-size: 10px; margin-top: 2px; text-transform: uppercase; }
+        
+        .ngb-msg { font-size: 13px; margin: 0; font-weight: 500; }
+        .ngb-msg.success { color: #d93025; }
+        .ngb-msg.error { color: #555; }
+        .ngb-msg.warning { color: #e67e22; }
+
+        /* Company Data Card Styles */
+        .ngb-data-card {
+            margin-top: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 100%;
+            text-align: left;
+            animation: slide-up 0.4s ease-out;
+        }
+        .ngb-card-header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d93025;
+        }
+        .ngb-card-title { font-size: 13px; font-weight: bold; letter-spacing: 1px; }
+        .ngb-card-badge { font-size: 11px; background: #27ae60; padding: 2px 6px; border-radius: 2px; }
+        .ngb-card-body { padding: 10px 12px; font-size: 13px; }
+        .ngb-data-row { margin-bottom: 8px; border-bottom: 1px dotted #eee; padding-bottom: 4px; display: flex; flex-direction: column;}
+        .ngb-data-row:last-child { border-bottom: none; margin-bottom: 0; }
+        .ngb-data-label { color: #888; font-size: 11px; margin-bottom: 2px; }
+        .ngb-data-value { color: #333; font-weight: 500; }
+        .ngb-data-value.large { font-size: 15px; font-weight: bold; color: #000; }
+        .ngb-card-footer { background: #f9f9f9; color: #aaa; font-size: 10px; text-align: center; padding: 4px; }
+        .ngb-api-notice { color: #666; font-size: 12px; margin-top: 10px; font-style: italic; background: #eee; padding: 8px; border-radius: 4px; }
+        .ngb-api-error { color: #d93025; font-size: 12px; margin-top: 10px; }
+
+        @keyframes stamp-pop { 0% { transform: scale(1.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(-15deg); opacity: 0.9; } }
+        @keyframes slide-up { 0% { transform: translateY(10px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+
+    <div class="ngb-ban-widget-wrapper">
+        <form method="post" autocomplete="off">
+            <?php wp_nonce_field( 'ngb_ban_check_action', 'ngb_ban_nonce' ); ?>
+            
+            <div class="ngb-form-row">
+                <label for="ngb_ban_input" class="ngb-label">統一編號 (BAN)</label>
+                <input type="text" id="ngb_ban_input" name="ngb_ban_input" 
+                       class="ngb-input-ban"
+                       value="<?php echo esc_attr( $input_value ); ?>"
+                       maxlength="8" 
+                       inputmode="numeric" 
+                       placeholder="--------" 
+                       required>
+            </div>
+
+            <div class="ngb-form-row">
+                <input type="submit" class="ngb-submit-btn" value="查核並取得資料">
+            </div>
+        </form>
+
+        <div id="ngb_ban_result" class="ngb-stamp-container">
+            <?php 
+            if ( ! empty( $result_html ) ) {
+                echo $result_html;
+            } else {
+                echo '<span style="color:#999; font-size:12px;">僅接受 8 位半形數字 (0-9)</span>';
+            }
+            ?>
+        </div>
+        
+        <?php echo $company_info_html; // 顯示公司資料卡 ?>
+    </div>
+
+    <script>
+    (function() {
+        var banInput = document.getElementById('ngb_ban_input');
+        if (banInput) {
+            banInput.addEventListener('input', function(e) {
+                var cleanVal = this.value.replace(/[^\d]/g, '');
+                if (cleanVal !== this.value) { this.value = cleanVal; }
+            });
+            banInput.addEventListener('keydown', function(e) {
+                if ([46, 8, 9, 27, 13, 110, 190].indexOf(e.keyCode) !== -1 ||
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) || 
+                    (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) || 
+                    (e.keyCode >= 35 && e.keyCode <= 40)) { return; }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) { e.preventDefault(); }
+            });
+        }
+    })();
+    </script>
+    <?php
+}
+
+/**
+ * 核心校驗函式 (修正邏輯：可被 5 整除)
+ */
+function ngb_verify_taiwan_ban_logic( $ban ) {
+    $multipliers = array( 1, 2, 1, 2, 1, 2, 4, 1 ); 
+    $ban_digits  = str_split( $ban );
+    $sum         = 0;
+    
+    if ( count($ban_digits) !== 8 ) return false;
+
+    $seventh_digit_is_seven = ( $ban_digits[6] === '7' ); 
+
+    foreach ( $ban_digits as $index => $digit ) {
+        $product = (int)$digit * $multipliers[$index]; 
+        $sum += (int)( $product / 10 ) + ( $product % 10 );
+    }
+    
+    if ( $seventh_digit_is_seven ) {
+        return ( $sum % 5 === 0 || ( $sum - 1 ) % 5 === 0 );
+    }
+
+    return ( $sum % 5 === 0 ); 
+}
+
+/**
+ * 串接經濟部 Open Data API
+ * Dataset ID: 5F64D864-61CB-4D0D-8AD9-492047CC1EA6 (公司登記基本資料)
+ */
+function ngb_fetch_gcis_company_data( $ban ) {
+    // API 端點 (使用 HTTPS)
+    $api_url = 'https://data.gcis.nat.gov.tw/od/data/api/5F64D864-61CB-4D0D-8AD9-492047CC1EA6';
+    
+    // 建構查詢參數
+    $params = array(
+        '$format' => 'json',
+        '$filter' => "Business_Accounting_NO eq " . $ban,
+        '$skip'   => 0,
+        '$top'    => 1,
+    );
+
+    $request_url = add_query_arg( $params, $api_url );
+
+    // 發送請求
+    $response = wp_remote_get( $request_url, array(
+        'timeout'   => 10, // 設定超時，避免卡住後台
+        'sslverify' => false, // 避免某些環境憑證問題，若主機設定正確可設為 true
+    ));
+
+    // 檢查錯誤
+    if ( is_wp_error( $response ) ) {
+        return $response;
+    }
+
+    $body = wp_remote_retrieve_body( $response );
+    $data = json_decode( $body, true );
+
+    // 若解析失敗或 API 回傳空 (某些情況 Open Data 回傳空字串代表查無資料)
+    if ( empty( $data ) || ! is_array( $data ) ) {
+        return array();
+    }
+
+    return $data;
+}
