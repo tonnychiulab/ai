@@ -109,35 +109,54 @@ class IC_Settings {
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( __( 'Permission denied', 'insight-cosmos' ) );
 
         $agent_type = isset($_POST['agent']) ? sanitize_text_field( wp_unslash( $_POST['agent'] ) ) : '';
-        
+
         // Load classes if not already loaded (though they should be via main file)
         if ( ! class_exists( 'IC_Scout' ) ) require_once IC_PATH . 'includes/agents/class-ic-scout.php';
         if ( ! class_exists( 'IC_Analyst' ) ) require_once IC_PATH . 'includes/agents/class-ic-analyst.php';
         if ( ! class_exists( 'IC_Curator' ) ) require_once IC_PATH . 'includes/agents/class-ic-curator.php';
+
+        // Clear previous logs
+        IC_Agent::clear_logs();
 
         try {
             switch ($agent_type) {
                 case 'scout':
                     $agent = new IC_Scout();
                     $agent->run();
-                    wp_send_json_success( __( 'Scout run completed successfully.', 'insight-cosmos' ) );
+                    $logs = IC_Agent::get_logs();
+                    wp_send_json_success( array(
+                        'message' => __( 'Scout run completed successfully.', 'insight-cosmos' ),
+                        'logs'    => $logs
+                    ));
                     break;
                 case 'analyst':
                     $agent = new IC_Analyst();
                     $agent->run();
-                    wp_send_json_success( __( 'Analyst run completed successfully.', 'insight-cosmos' ) );
+                    $logs = IC_Agent::get_logs();
+                    wp_send_json_success( array(
+                        'message' => __( 'Analyst run completed successfully.', 'insight-cosmos' ),
+                        'logs'    => $logs
+                    ));
                     break;
                 case 'curator':
                     $agent = new IC_Curator();
                     $agent->run();
-                    wp_send_json_success( __( 'Curator run completed successfully.', 'insight-cosmos' ) );
+                    $logs = IC_Agent::get_logs();
+                    wp_send_json_success( array(
+                        'message' => __( 'Curator run completed successfully.', 'insight-cosmos' ),
+                        'logs'    => $logs
+                    ));
                     break;
                 default:
                     wp_send_json_error( __( 'Unknown agent type.', 'insight-cosmos' ) );
             }
         } catch (Exception $e) {
+            $logs = IC_Agent::get_logs();
             /* translators: %s: Exception message */
-            wp_send_json_error( sprintf( __( 'Error: %s', 'insight-cosmos' ), $e->getMessage() ) );
+            wp_send_json_error( array(
+                'message' => sprintf( __( 'Error: %s', 'insight-cosmos' ), $e->getMessage() ),
+                'logs'    => $logs
+            ));
         }
     }
 
@@ -210,6 +229,9 @@ class IC_Settings {
             </div>
             <div id="agent-msg" style="margin-top: 15px; font-weight: bold; min-height: 20px;"></div>
 
+            <h3 style="margin-top: 20px;"><?php esc_html_e( 'Debug Logs', 'insight-cosmos' ); ?></h3>
+            <pre id="debug-logs" style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;"><?php esc_html_e( 'Click a button above to see debug output...', 'insight-cosmos' ); ?></pre>
+
             <script>
             jQuery(document).ready(function($) {
                 var nonce = '<?php echo esc_js( wp_create_nonce( "ic_settings_nonce" ) ); ?>';
@@ -239,6 +261,7 @@ class IC_Settings {
                     var originalText = $(btn).text();
                     $(btn).text('<?php echo esc_js( __( 'Running...', 'insight-cosmos' ) ); ?>').prop('disabled', true);
                     $('#agent-msg').text('').css('color', '');
+                    $('#debug-logs').text('<?php echo esc_js( __( 'Running...', 'insight-cosmos' ) ); ?>');
 
                     $.post(ajaxurl, {
                         action: 'ic_run_agent',
@@ -246,9 +269,20 @@ class IC_Settings {
                         nonce: nonce
                     }, function(res) {
                         $(btn).text(originalText).prop('disabled', false);
+
+                        // Display logs
+                        var logs = '';
+                        if (res.data && res.data.logs && res.data.logs.length > 0) {
+                            logs = res.data.logs.join('\n');
+                        } else if (res.data && typeof res.data.logs !== 'undefined') {
+                            logs = '<?php echo esc_js( __( 'No logs recorded.', 'insight-cosmos' ) ); ?>';
+                        }
+
                         if(res.success) {
-                            $('#agent-msg').text('✔ ' + res.data).css('color', 'green');
-                            
+                            var msg = res.data.message || res.data;
+                            $('#agent-msg').text('✔ ' + msg).css('color', 'green');
+                            $('#debug-logs').text(logs || '<?php echo esc_js( __( 'Completed with no logs.', 'insight-cosmos' ) ); ?>');
+
                             // Sequential Unlock Logic
                             if (agent === 'scout') {
                                 $('#btn-run-analyst').prop('disabled', false);
@@ -256,11 +290,14 @@ class IC_Settings {
                                 $('#btn-run-curator').prop('disabled', false);
                             }
                         } else {
-                            $('#agent-msg').text('✘ ' + res.data).css('color', 'red');
+                            var errMsg = res.data.message || res.data;
+                            $('#agent-msg').text('✘ ' + errMsg).css('color', 'red');
+                            $('#debug-logs').text(logs || '<?php echo esc_js( __( 'Error occurred. Check server logs.', 'insight-cosmos' ) ); ?>');
                         }
-                    }).fail(function() {
+                    }).fail(function(xhr, status, error) {
                         $(btn).text(originalText).prop('disabled', false);
                         $('#agent-msg').text('✘ <?php echo esc_js( __( 'Server Error', 'insight-cosmos' ) ); ?>').css('color', 'red');
+                        $('#debug-logs').text('AJAX Error: ' + status + ' - ' + error + '\n\nResponse: ' + xhr.responseText);
                     });
                 }
 

@@ -2,7 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 abstract class IC_Agent {
-    
+
+    /**
+     * Debug log storage
+     */
+    protected static $debug_logs = array();
+
     /**
      * Run the agent's main logic.
      * Should be called by WP-Cron or manually.
@@ -10,12 +15,30 @@ abstract class IC_Agent {
     abstract public function run();
 
     /**
-     * Helper log function (can be improved to write to a file or DB)
+     * Helper log function - stores logs for later retrieval
      */
     protected function log( $message ) {
+        $log_entry = '[' . static::class . '] ' . $message;
+        self::$debug_logs[] = $log_entry;
+
+        // Also write to debug.log if WP_DEBUG is enabled
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            // error_log( '[' . static::class . '] ' . $message );
+            error_log( $log_entry );
         }
+    }
+
+    /**
+     * Get all collected debug logs
+     */
+    public static function get_logs() {
+        return self::$debug_logs;
+    }
+
+    /**
+     * Clear debug logs
+     */
+    public static function clear_logs() {
+        self::$debug_logs = array();
     }
 
     /**
