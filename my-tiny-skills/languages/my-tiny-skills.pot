@@ -1,0 +1,99 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: My Tiny Skills 1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-25 16:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Antigravity Code Assistant\n"
+"X-Domain: my-tiny-skills\n"
+
+#. Plugin Name of the plugin
+#: my-tiny-skills.php:26 includes/class-mts-admin.php:34 includes/class-mts-admin.php:35 includes/class-mts-admin.php:68
+msgid "My Tiny Skills"
+msgstr ""
+
+#. Description of the plugin
+msgid "A lightweight tool to inspect enabled and disabled wp-config.php constants."
+msgstr ""
+
+#: includes/class-mts-admin.php:18
+msgid "Constants"
+msgstr ""
+
+#: includes/class-mts-admin.php:22
+msgid "WP Cron"
+msgstr ""
+
+#: includes/class-mts-admin.php:26
+msgid "Options Health"
+msgstr ""
+
+#: includes/class-mts-admin.php:93
+msgid "Error: Class not found."
+msgstr ""
+
+#: includes/class-mts-admin.php:96
+msgid "Error: Skill file not found."
+msgstr ""
+
+#: includes/class-mts-skill-constants.php:38
+msgid "Enabled Constants"
+msgstr ""
+
+#: includes/class-mts-skill-constants.php:54
+msgid "Disabled / Default"
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:10
+msgid "No cron events found."
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:36
+msgid "Scheduled Cron Events"
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:40
+msgid "Hook Name"
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:41
+msgid "Next Run"
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:42
+msgid "Recurrence"
+msgstr ""
+
+#: includes/class-mts-skill-cron.php:43
+msgid "Arguments"
+msgstr ""
+
+#: includes/class-mts-skill-options.php:37
+msgid "Autoload Options Analysis"
+msgstr ""
+
+#: includes/class-mts-skill-options.php:40
+msgid "Total Autoload Size:"
+msgstr ""
+
+#: includes/class-mts-skill-options.php:46
+msgid "WordPress loads these options on EVERY page load. Ideally this should be under 800KB (0.8MB)."
+msgstr ""
+
+#: includes/class-mts-skill-options.php:53
+msgid "Option Name"
+msgstr ""
+
+#: includes/class-mts-skill-options.php:54
+msgid "Size (Bytes)"
+msgstr ""
+
+#: includes/class-mts-skill-options.php:55
+msgid "Severity"
+msgstr ""
