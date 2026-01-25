@@ -1,0 +1,188 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: InsightCosmos WP 1.0.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-25 09:47+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: insight-cosmos\n"
+
+#. Name of the plugin
+msgid "InsightCosmos WP"
+msgstr ""
+
+#. Description of the plugin
+msgid "An AI agent-powered WordPress plugin for automated intelligence gathering and analysis."
+msgstr ""
+
+#: insight-cosmos.php:39
+msgid "Intelligence Reports"
+msgstr ""
+
+#: insight-cosmos.php:40
+msgid "Report"
+msgstr ""
+
+#: includes/class-ic-assets.php:15
+msgid "Insight Cosmos Dashboard"
+msgstr ""
+
+#: includes/class-ic-assets.php:19
+msgid "Select a node to view details"
+msgstr ""
+
+#: includes/class-ic-assets.php:22
+msgid "+ Add Node"
+msgstr ""
+
+#: includes/class-ic-settings.php:24
+#: includes/class-ic-settings.php:25
+msgid "Settings"
+msgstr ""
+
+#: includes/class-ic-settings.php:48
+#: includes/class-ic-settings.php:74
+#: includes/class-ic-settings.php:107
+msgid "Permission denied"
+msgstr ""
+
+#: includes/class-ic-settings.php:51
+#: includes/class-ic-settings.php:77
+msgid "Key is empty"
+msgstr ""
+
+#: includes/class-ic-settings.php:59
+#, php-format
+msgid "Connection failed: %s"
+msgstr ""
+
+#: includes/class-ic-settings.php:64
+msgid "Valid Key!"
+msgstr ""
+
+#: includes/class-ic-settings.php:67
+msgid "Invalid Key"
+msgstr ""
+
+#: includes/class-ic-settings.php:90
+msgid "Valid Serper Key!"
+msgstr ""
+
+#: includes/class-ic-settings.php:96
+msgid "Validation failed. tested against Serper.dev endpoints."
+msgstr ""
+
+#: includes/class-ic-settings.php:99
+#, php-format
+msgid "Response Code: %s"
+msgstr ""
+
+#: includes/class-ic-settings.php:121
+msgid "Scout run completed successfully."
+msgstr ""
+
+#: includes/class-ic-settings.php:126
+msgid "Analyst run completed successfully."
+msgstr ""
+
+#: includes/class-ic-settings.php:131
+msgid "Curator run completed successfully."
+msgstr ""
+
+#: includes/class-ic-settings.php:134
+msgid "Unknown agent type."
+msgstr ""
+
+#: includes/class-ic-settings.php:137
+#, php-format
+msgid "Error: %s"
+msgstr ""
+
+#: includes/class-ic-settings.php:144
+msgid "InsightCosmos Settings"
+msgstr ""
+
+#: includes/class-ic-settings.php:151
+msgid "OpenAI API Key"
+msgstr ""
+
+#: includes/class-ic-settings.php:155
+#: includes/class-ic-settings.php:172
+#: includes/class-ic-settings.php:226
+msgid "Test Key"
+msgstr ""
+
+#: includes/class-ic-settings.php:159
+msgid "Required for Analyst Agent (LLM Analysis)."
+msgstr ""
+
+#: includes/class-ic-settings.php:161
+msgid "Get OpenAI API Key"
+msgstr ""
+
+#: includes/class-ic-settings.php:168
+msgid "Search API Key (Google/Serper)"
+msgstr ""
+
+#: includes/class-ic-settings.php:176
+msgid "Optional. Used by Scout Agent for web search."
+msgstr ""
+
+#: includes/class-ic-settings.php:178
+msgid "Get Serper Key"
+msgstr ""
+
+#: includes/class-ic-settings.php:181
+msgid "Or Google API"
+msgstr ""
+
+#: includes/class-ic-settings.php:188
+msgid "RSS Feeds (One per line)"
+msgstr ""
+
+#: includes/class-ic-settings.php:191
+msgid "Scout Agent will monitor these feeds daily."
+msgstr ""
+
+#: includes/class-ic-settings.php:201
+msgid "Manual Operations (Testing)"
+msgstr ""
+
+#: includes/class-ic-settings.php:202
+msgid "Manually trigger agents to test functionality."
+msgstr ""
+
+#: includes/class-ic-settings.php:204
+msgid "Run Scout (Fetch Feeds)"
+msgstr ""
+
+#: includes/class-ic-settings.php:205
+msgid "Run Analyst (AI Analysis)"
+msgstr ""
+
+#: includes/class-ic-settings.php:206
+msgid "Run Curator (Generate Report)"
+msgstr ""
+
+#: includes/class-ic-settings.php:216
+msgid "Please enter a key first"
+msgstr ""
+
+#: includes/class-ic-settings.php:218
+msgid "Verifying..."
+msgstr ""
+
+#: includes/class-ic-settings.php:237
+msgid "Running..."
+msgstr ""
+
+#: includes/class-ic-settings.php:253
+msgid "Server Error"
+msgstr ""

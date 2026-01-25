@@ -1,0 +1,214 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: InsightCosmos WP 1.0.7\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-25 09:47+0000\n"
+"PO-Revision-Date: 2026-01-25 09:49+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+"X-Domain: insight-cosmos\n"
+
+#. Name of the plugin
+#, fuzzy
+msgid "InsightCosmos WP"
+msgstr "InsightCosmos WP"
+
+#. Description of the plugin
+#, fuzzy
+msgid ""
+"An AI agent-powered WordPress plugin for automated intelligence gathering "
+"and analysis."
+msgstr "一款由人工智慧代理驅動的 WordPress 外掛，用於自動化情報收集與分析。"
+
+#: insight-cosmos.php:39
+#, fuzzy
+msgid "Intelligence Reports"
+msgstr "情報報告"
+
+#: insight-cosmos.php:40
+msgid "Report"
+msgstr "報告"
+
+#: includes/class-ic-assets.php:15
+#, fuzzy
+msgid "Insight Cosmos Dashboard"
+msgstr "Insight Cosmos 儀表板"
+
+#: includes/class-ic-assets.php:19
+#, fuzzy
+msgid "Select a node to view details"
+msgstr "選擇節點以查看詳細資訊"
+
+#: includes/class-ic-assets.php:22
+#, fuzzy
+msgid "+ Add Node"
+msgstr "+ 新增節點"
+
+#: includes/class-ic-settings.php:24 includes/class-ic-settings.php:25
+msgid "Settings"
+msgstr "設定"
+
+#: includes/class-ic-settings.php:48 includes/class-ic-settings.php:74
+#: includes/class-ic-settings.php:107
+msgid "Permission denied"
+msgstr "權限遭拒"
+
+#: includes/class-ic-settings.php:51 includes/class-ic-settings.php:77
+#, fuzzy
+msgid "Key is empty"
+msgstr "鑰匙是空的"
+
+#: includes/class-ic-settings.php:59
+#, fuzzy, php-format
+msgid "Connection failed: %s"
+msgstr "連線失敗：%s"
+
+#: includes/class-ic-settings.php:64
+#, fuzzy
+msgid "Valid Key!"
+msgstr "有效鑰匙！"
+
+#: includes/class-ic-settings.php:67
+msgid "Invalid Key"
+msgstr "無效的金鑰"
+
+#: includes/class-ic-settings.php:90
+#, fuzzy
+msgid "Valid Serper Key!"
+msgstr "有效的蛇形鑰匙！"
+
+#: includes/class-ic-settings.php:96
+#, fuzzy
+msgid "Validation failed. tested against Serper.dev endpoints."
+msgstr "驗證失敗。並以 Serper.dev 端點進行測試。"
+
+#: includes/class-ic-settings.php:99
+#, fuzzy, php-format
+msgid "Response Code: %s"
+msgstr "回應代碼：%s"
+
+#: includes/class-ic-settings.php:121
+#, fuzzy
+msgid "Scout run completed successfully."
+msgstr "童軍行動順利完成。"
+
+#: includes/class-ic-settings.php:126
+#, fuzzy
+msgid "Analyst run completed successfully."
+msgstr "分析師行動順利完成。"
+
+#: includes/class-ic-settings.php:131
+#, fuzzy
+msgid "Curator run completed successfully."
+msgstr "策展人活動順利完成。"
+
+#: includes/class-ic-settings.php:134
+#, fuzzy
+msgid "Unknown agent type."
+msgstr "特工類型不明。"
+
+#: includes/class-ic-settings.php:137
+#, php-format
+msgid "Error: %s"
+msgstr "錯誤: %s"
+
+#: includes/class-ic-settings.php:144
+#, fuzzy
+msgid "InsightCosmos Settings"
+msgstr "InsightCosmos 設定"
+
+#: includes/class-ic-settings.php:151
+msgid "OpenAI API Key"
+msgstr "OpenAI API 金鑰"
+
+#: includes/class-ic-settings.php:155 includes/class-ic-settings.php:172
+#: includes/class-ic-settings.php:226
+msgid "Test Key"
+msgstr "測試金鑰"
+
+#: includes/class-ic-settings.php:159
+#, fuzzy
+msgid "Required for Analyst Agent (LLM Analysis)."
+msgstr "分析師代理（LLM 分析）必備條件。"
+
+#: includes/class-ic-settings.php:161
+#, fuzzy
+msgid "Get OpenAI API Key"
+msgstr "取得 OpenAI API 金鑰"
+
+#: includes/class-ic-settings.php:168
+#, fuzzy
+msgid "Search API Key (Google/Serper)"
+msgstr "搜尋 API 金鑰（Google/Serper）"
+
+#: includes/class-ic-settings.php:176
+#, fuzzy
+msgid "Optional. Used by Scout Agent for web search."
+msgstr "可選的。由 Scout Agent 用於網路搜尋。"
+
+#: includes/class-ic-settings.php:178
+#, fuzzy
+msgid "Get Serper Key"
+msgstr "取得蛇鑰"
+
+#: includes/class-ic-settings.php:181
+#, fuzzy
+msgid "Or Google API"
+msgstr "或者 Google API"
+
+#: includes/class-ic-settings.php:188
+#, fuzzy
+msgid "RSS Feeds (One per line)"
+msgstr "RSS 訂閱（每行一個）"
+
+#: includes/class-ic-settings.php:191
+#, fuzzy
+msgid "Scout Agent will monitor these feeds daily."
+msgstr "偵察特工會每天監控這些訊號。"
+
+#: includes/class-ic-settings.php:201
+#, fuzzy
+msgid "Manual Operations (Testing)"
+msgstr "手動操作（測試）"
+
+#: includes/class-ic-settings.php:202
+#, fuzzy
+msgid "Manually trigger agents to test functionality."
+msgstr "手動觸發代理來測試功能。"
+
+#: includes/class-ic-settings.php:204
+#, fuzzy
+msgid "Run Scout (Fetch Feeds)"
+msgstr "奔跑偵察（撿球）"
+
+#: includes/class-ic-settings.php:205
+#, fuzzy
+msgid "Run Analyst (AI Analysis)"
+msgstr "Run 分析師（AI 分析）"
+
+#: includes/class-ic-settings.php:206
+#, fuzzy
+msgid "Run Curator (Generate Report)"
+msgstr "運行策展人（生成報告）"
+
+#: includes/class-ic-settings.php:216
+#, fuzzy
+msgid "Please enter a key first"
+msgstr "請先輸入一把鑰匙"
+
+#: includes/class-ic-settings.php:218
+msgid "Verifying..."
+msgstr "確認…"
+
+#: includes/class-ic-settings.php:237
+msgid "Running..."
+msgstr "正在運行..."
+
+#: includes/class-ic-settings.php:253
+msgid "Server Error"
+msgstr "伺服器錯誤"

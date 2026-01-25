@@ -1,0 +1,4 @@
+#ic-container { display: flex; height: 500px; border: 1px solid #ccc; background: #fff; }
+#ic-canvas { flex: 1; height: 100%; }
+#ic-side-panel { width: 250px; border-left: 1px solid #ccc; padding: 20px; background: #f9f9f9; }
+.button-link-delete { color: #d63638; cursor: pointer; }
