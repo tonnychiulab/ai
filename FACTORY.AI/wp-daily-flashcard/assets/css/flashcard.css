@@ -1,0 +1,120 @@
+.wpdf-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  z-index: 9999;
+}
+
+.wpdf-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.wpdf-card {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.4);
+  padding: 20px 20px 16px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.wpdf-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #111827;
+}
+
+.wpdf-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.wpdf-text {
+  text-align: center;
+  margin: 6px 0;
+}
+
+.wpdf-text-en {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.wpdf-text-zh {
+  font-size: 18px;
+  color: #374151;
+}
+
+.wpdf-image-container {
+  margin: 10px 0;
+  min-height: 120px;
+  border-radius: 10px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.wpdf-image-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.wpdf-image-placeholder {
+  padding: 12px;
+  font-size: 13px;
+  color: #e5e7eb;
+  text-align: center;
+}
+
+.wpdf-generate {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 0;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(to right, #22c55e, #16a34a);
+  color: #022c22;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.wpdf-generate:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.wpdf-message {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.wpdf-message--error {
+  color: #dc2626;
+}
+
+.wpdf-message--success {
+  color: #16a34a;
+}
